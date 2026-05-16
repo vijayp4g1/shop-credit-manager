@@ -38,22 +38,27 @@ export default async function ExpensesPage() {
   });
 
   return (
-    <div className="min-h-screen bg-surface pb-24">
-      {/* Top AppBar with Glassmorphism */}
-      <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-lg border-b border-outline-variant/30 shadow-sm flex items-center justify-between px-margin-mobile h-16 transition-all">
+    <div className="min-h-screen bg-surface pb-36 font-sans selection:bg-amber-500/20 selection:text-amber-700">
+      {/* Top AppBar with Premium Glassmorphism */}
+      <header className="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl border-b border-outline-variant/30 shadow-xs flex items-center justify-between px-margin-mobile h-16 transition-all">
         <div className="flex items-center gap-3">
-          <Link href="/" className="w-10 h-10 rounded-full hover:bg-surface-container-high transition-all active:scale-90 duration-200 flex items-center justify-center text-on-surface-variant">
-            <span className="material-symbols-outlined text-[24px]">arrow_back</span>
+          <Link href="/" className="w-10 h-10 rounded-full bg-surface-container-lowest border border-outline-variant/40 hover:bg-surface-container transition-all active:scale-95 duration-200 flex items-center justify-center text-on-surface shadow-2xs">
+            <span className="material-symbols-outlined text-[22px]">arrow_back</span>
           </Link>
           <div className="flex flex-col">
-            <span className="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest leading-tight">Shop Outflow</span>
-            <h1 className="font-headline-sm text-base font-bold text-on-surface leading-tight">
+            <div className="flex items-center gap-1.5 font-bold uppercase tracking-widest leading-none">
+              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+              <span className="text-[10px] text-on-surface-variant font-extrabold tracking-wider">Shop Outflow</span>
+            </div>
+            <h1 className="text-lg font-black text-on-surface tracking-tight leading-tight flex items-center gap-1.5">
               Expense Tracker
             </h1>
           </div>
         </div>
-        <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-500 to-amber-600 flex items-center justify-center text-white shadow-md">
-          <span className="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+        <div className="flex items-center gap-2">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-500 to-amber-600 flex items-center justify-center text-white shadow-[0_4px_12px_rgba(245,158,11,0.3)] border border-amber-400/20">
+            <span className="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+          </div>
         </div>
       </header>
 
