@@ -3,6 +3,9 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import WhatsAppReminderButton from "@/components/WhatsAppReminderButton";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function Reports() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -40,8 +43,9 @@ export default async function Reports() {
       .is("deleted_at", null),
     supabase
       .from("transactions")
-      .select("*")
+      .select("*, customers!inner(name, deleted_at)")
       .eq("shop_id", shop.id)
+      .is("customers.deleted_at", null)
       .gte("created_at", startOfMonth.toISOString())
   ]);
   

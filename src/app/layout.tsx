@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import BottomNavBar from "@/components/BottomNavBar";
@@ -11,6 +11,14 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Shop Credit Manager",
   description: "Manage customer udhar and jama easily.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: "#0f172a",
 };
 
 export default function RootLayout({

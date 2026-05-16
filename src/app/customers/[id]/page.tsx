@@ -9,6 +9,10 @@ import WhatsAppReminderSheet from "@/components/WhatsAppReminderSheet";
 import DownloadStatementButton from "@/components/DownloadStatementButton";
 import ClearKhataButton from "@/components/ClearKhataButton";
 import AddTransactionSheet from "@/components/AddTransactionSheet";
+import EditCustomerSheet from "@/components/EditCustomerSheet";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function CustomerLedger({
   params,
@@ -106,7 +110,15 @@ export default async function CustomerLedger({
             </h1>
           </div>
         </div>
-        <DeleteCustomerButton customerId={id} />
+        <div className="flex items-center gap-1.5">
+          <EditCustomerSheet
+            customerId={id}
+            initialName={customer.name}
+            initialPhone={customer.phone}
+            initialAddress={customer.address}
+          />
+          <DeleteCustomerButton customerId={id} />
+        </div>
       </header>
 
       <main className="pt-20 px-margin-mobile max-w-5xl mx-auto space-y-6">

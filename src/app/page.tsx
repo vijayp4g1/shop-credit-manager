@@ -1,9 +1,13 @@
 import TransactionFab from "@/components/TransactionFab";
 import HeaderSearchButton from "@/components/HeaderSearchButton";
 import QuickActionButtons from "@/components/QuickActionButtons";
+import AddCustomerSheet from "@/components/AddCustomerSheet";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0; // Disable caching to ensure fresh ledger data
 
 export default async function Dashboard() {
   const supabase = await createClient();
@@ -40,8 +44,9 @@ export default async function Dashboard() {
     supabase.rpc("get_shop_balance_summary", { p_shop_id: shop.id }),
     supabase
       .from("transactions")
-      .select("*, customers(name)")
+      .select("*, customers!inner(name, deleted_at)")
       .eq("shop_id", shop.id)
+      .is("customers.deleted_at", null)
       .order("created_at", { ascending: false })
       .limit(5)
   ]);
@@ -173,40 +178,57 @@ export default async function Dashboard() {
             </Link>
           </div>
           
-          <div className="space-y-3">
+          <div className="space-y-3.5">
             {transactions && transactions.length > 0 ? (
               transactions.map((tx, index) => {
                 const isJama = tx.type === 'PAYMENT';
                 const customerName = tx.customers?.name || 'Unknown';
                 const initials = customerName.substring(0, 2).toUpperCase();
+                const noteOrMode = tx.description ? tx.description : (tx.payment_mode ? `Paid via ${tx.payment_mode}` : '');
                 
                 return (
-                  <div 
+                  <Link 
                     key={tx.id} 
-                    className="group relative overflow-hidden bg-gradient-to-br from-surface-container-lowest to-surface-container/20 border border-outline-variant/30 hover:border-outline-variant/60 rounded-[24px] p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-pointer"
+                    href={`/customers/${tx.customer_id}`}
+                    className="group relative overflow-hidden bg-gradient-to-br from-surface-container-lowest via-surface-container/30 to-surface-container-lowest border border-outline-variant/40 hover:border-primary/40 hover:bg-surface-container/50 rounded-[28px] p-4.5 flex items-center justify-between shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-300 hover:-translate-y-0.5 block"
                     style={{ animationDelay: `${400 + (index * 50)}ms` }}
                   >
-                    <div className="flex items-center gap-4 relative z-10">
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-sm border-[3px] transition-transform duration-300 group-hover:scale-110 ${isJama ? 'bg-jama-success/5 text-jama-success border-jama-success/20' : 'bg-udhar-destructive/5 text-udhar-destructive border-udhar-destructive/20'}`}>
+                    <div className="flex items-center gap-4 relative z-10 min-w-0 flex-1 pr-3">
+                      <div className={`w-13 h-13 rounded-full flex items-center justify-center font-bold text-lg shadow-sm border-[3px] shrink-0 transition-transform duration-300 group-hover:scale-110 ${isJama ? 'bg-jama-success/10 text-jama-success border-jama-success/30' : 'bg-udhar-destructive/10 text-udhar-destructive border-udhar-destructive/30'}`}>
                         {initials}
                       </div>
-                      <div>
-                        <div className="font-headline-sm text-base font-bold text-on-surface group-hover:text-primary transition-colors">{customerName}</div>
-                        <div className="text-[11px] text-on-surface-variant flex items-center gap-1.5 mt-0.5 font-medium">
-                          <span className="material-symbols-outlined text-[14px] opacity-70">schedule</span>
-                          {formatTime(tx.created_at)}
+                      <div className="min-w-0 flex-1">
+                        <div className="font-headline-sm text-base font-bold text-on-surface group-hover:text-primary transition-colors truncate leading-tight">
+                          {customerName}
+                        </div>
+                        <div className="text-[11px] text-on-surface-variant flex items-center gap-1.5 mt-1 font-medium truncate opacity-90">
+                          <span className="material-symbols-outlined text-[14px] opacity-70 shrink-0">schedule</span>
+                          <span>{formatTime(tx.created_at)}</span>
+                          {noteOrMode && (
+                            <>
+                              <span className="opacity-50">•</span>
+                              <span className="text-on-surface font-semibold truncate bg-surface-container-highest/50 px-2 py-0.5 rounded-full text-[10px]">
+                                {noteOrMode}
+                              </span>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
-                    <div className="text-right flex flex-col items-end relative z-10">
-                      <div className={`font-amount-display text-[20px] font-bold tracking-tight leading-none mb-1 ${isJama ? 'text-jama-success' : 'text-udhar-destructive'}`}>
-                        {isJama ? '+' : '-'}₹{Number(tx.amount).toLocaleString('en-IN')}
+                    <div className="text-right flex items-center gap-2.5 relative z-10 shrink-0 pl-2">
+                      <div className="flex flex-col items-end">
+                        <div className={`font-amount-display text-[20px] font-bold tracking-tight leading-none mb-1.5 ${isJama ? 'text-jama-success' : 'text-udhar-destructive'}`}>
+                          {isJama ? '+' : '-'}₹{Number(tx.amount).toLocaleString('en-IN')}
+                        </div>
+                        <div className={`text-[9px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-widest border shadow-2xs ${isJama ? 'bg-jama-success/15 text-jama-success border-jama-success/30' : 'bg-udhar-destructive/15 text-udhar-destructive border-udhar-destructive/30'}`}>
+                          {isJama ? 'Jama (Cr)' : 'Udhar (Dr)'}
+                        </div>
                       </div>
-                      <div className={`text-[9px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-widest border ${isJama ? 'bg-jama-success/10 text-jama-success border-jama-success/20' : 'bg-udhar-destructive/10 text-udhar-destructive border-udhar-destructive/20'}`}>
-                        {isJama ? 'Jama' : 'Udhar'}
+                      <div className="w-8 h-8 rounded-full bg-surface-container-high/40 group-hover:bg-primary/10 flex items-center justify-center text-on-surface-variant group-hover:text-primary transition-all duration-300 group-hover:translate-x-0.5 shrink-0">
+                        <span className="material-symbols-outlined text-[18px]">chevron_right</span>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 );
               })
             ) : (
@@ -223,6 +245,7 @@ export default async function Dashboard() {
       </main>
 
       <TransactionFab shopId={shop.id} customers={customers || []} />
+      <AddCustomerSheet shopId={shop.id} hideFab />
     </div>
   );
 }

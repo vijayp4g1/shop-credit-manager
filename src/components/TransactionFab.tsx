@@ -34,7 +34,7 @@ export default function TransactionFab({ shopId, customers = [], preselectedCust
   const [errorMessage, setErrorMessage] = useState("");
   const [showExcessConfirmModal, setShowExcessConfirmModal] = useState(false);
 
-  const { isTransactionModalOpen, initialTransactionType, closeTransactionModal } = useAppStore();
+  const { isTransactionModalOpen, initialTransactionType, closeTransactionModal, openAddCustomerModal } = useAppStore();
   const customerDropdownRef = useRef<HTMLDivElement>(null);
   const supabase = createClient();
   const router = useRouter();
@@ -314,7 +314,22 @@ export default function TransactionFab({ shopId, customers = [], preselectedCust
                         ))}
                       </div>
                     ) : (
-                      <div className="px-4 py-5 text-sm font-medium text-on-surface-variant text-center">No customers found</div>
+                      <div className="p-3 text-center">
+                        <p className="text-xs font-medium text-on-surface-variant mb-2">No customers found</p>
+                        {customerSearch.trim() && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              openAddCustomerModal(customerSearch.trim());
+                              handleClose();
+                            }}
+                            className="w-full py-3 px-4 bg-primary/10 text-primary hover:bg-primary/20 active:scale-95 transition-all rounded-[16px] font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                          >
+                            <span className="material-symbols-outlined text-[18px]">person_add</span>
+                            Add &quot;{customerSearch.trim()}&quot; as customer
+                          </button>
+                        )}
+                      </div>
                     )}
                   </div>
                 )}

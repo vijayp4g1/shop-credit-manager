@@ -4,6 +4,9 @@ import Link from "next/link";
 import DeleteTransactionButton from "@/components/DeleteTransactionButton";
 import EditTransactionSheet from "@/components/EditTransactionSheet";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function Ledger() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -25,11 +28,12 @@ export default async function Ledger() {
     redirect("/setup");
   }
 
-  // Fetch all transactions
+  // Fetch all transactions for active customers
   const { data: transactions } = await supabase
     .from("transactions")
-    .select("*, customers(name)")
+    .select("*, customers!inner(name, deleted_at)")
     .eq("shop_id", shop.id)
+    .is("customers.deleted_at", null)
     .order("created_at", { ascending: false });
 
   // Helper for formatting dates and times
