@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 
@@ -9,10 +10,16 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isPortalMounted, setIsPortalMounted] = useState(false);
   
   const router = useRouter();
   const supabase = createClient();
+
+  useEffect(() => {
+    setIsPortalMounted(true);
+  }, []);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,8 +33,8 @@ export default function Login() {
           password,
         });
         if (signUpError) throw signUpError;
-        // On success, you might want to show a success message or redirect
-        alert("Registration successful! You can now log in.");
+        
+        setShowSuccessModal(true);
         setIsSignUp(false);
       } else {
         const { error: signInError } = await supabase.auth.signInWithPassword({
@@ -69,7 +76,7 @@ export default function Login() {
           </h2>
 
           {error && (
-            <div className="mb-6 p-4 bg-error-container/50 border border-error/20 text-on-error-container rounded-[16px] text-xs font-bold uppercase tracking-widest text-center">
+            <div className="mb-6 p-4 bg-error-container/50 border border-error/20 text-on-error-container rounded-[16px] text-xs font-bold uppercase tracking-widest text-center animate-shake">
               {error}
             </div>
           )}
@@ -113,7 +120,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-4.5 bg-gradient-to-r from-primary to-primary/80 text-on-primary rounded-[20px] font-bold text-[13px] uppercase tracking-widest shadow-lg shadow-primary/25 active:scale-[0.98] transition-all flex items-center justify-center disabled:opacity-70 disabled:active:scale-100"
+            className="w-full py-4 bg-gradient-to-r from-primary to-primary/80 text-on-primary rounded-[20px] font-bold text-[13px] uppercase tracking-widest shadow-lg shadow-primary/25 active:scale-[0.98] transition-all flex items-center justify-center disabled:opacity-70 disabled:active:scale-100 cursor-pointer"
           >
             {isLoading ? (
               <span className="material-symbols-outlined animate-spin text-[20px]">progress_activity</span>
@@ -127,12 +134,39 @@ export default function Login() {
           <button
             type="button"
             onClick={() => setIsSignUp(!isSignUp)}
-            className="text-[12px] font-bold uppercase tracking-widest text-primary hover:text-primary/80 transition-all hover:bg-primary/5 px-4 py-2 rounded-full"
+            className="text-[12px] font-bold uppercase tracking-widest text-primary hover:text-primary/80 transition-all hover:bg-primary/5 px-4 py-2 rounded-full cursor-pointer"
           >
             {isSignUp ? "Already have an account? Log In" : "Don't have an account? Sign Up"}
           </button>
         </div>
       </div>
+
+      {/* Registration Success Modal */}
+      {isPortalMounted && typeof document !== 'undefined' && showSuccessModal && createPortal(
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-6 pointer-events-auto">
+          <div
+            className="fixed inset-0 bg-black/50 z-[120] transition-opacity duration-300 backdrop-blur-sm opacity-100"
+            onClick={() => setShowSuccessModal(false)}
+          />
+          <div className="bg-surface rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-outline-variant/30 z-[121] transition-all duration-300 transform scale-100 opacity-100 text-center">
+            <div className="w-16 h-16 bg-jama-success/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-jama-success/20 text-jama-success">
+              <span className="material-symbols-outlined text-[36px]">verified</span>
+            </div>
+            <h3 className="font-headline-sm text-xl font-bold text-on-surface mb-2">Registration Successful!</h3>
+            <p className="text-sm text-on-surface-variant mb-6 leading-relaxed">
+              Your account for <span className="font-bold text-primary">{email}</span> has been created. You can now log in and digitize your shop&apos;s khata.
+            </p>
+            <button
+              type="button"
+              onClick={() => setShowSuccessModal(false)}
+              className="w-full py-3.5 rounded-xl font-bold text-sm bg-primary text-on-primary shadow-md hover:shadow-lg active:scale-[0.98] transition-all cursor-pointer uppercase tracking-widest"
+            >
+              Log In Now
+            </button>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 }
