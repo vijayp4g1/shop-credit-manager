@@ -83,9 +83,9 @@ export default async function Dashboard() {
       {/* Top AppBar with Glassmorphism */}
       <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-lg border-b border-outline-variant/30 shadow-sm flex items-center justify-between px-margin-mobile h-16 transition-all">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-primary-container flex items-center justify-center text-on-primary shadow-md">
-            <span className="material-symbols-outlined text-[20px]">storefront</span>
-          </div>
+          <Link href="/profile" className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-primary-container flex items-center justify-center text-on-primary shadow-md active:scale-95 transition-transform cursor-pointer">
+            <span className="material-symbols-outlined text-[20px]">person</span>
+          </Link>
           <div className="flex flex-col">
             <span className="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest leading-tight">Welcome back</span>
             <h1 className="font-headline-sm text-base font-bold text-on-surface leading-tight">

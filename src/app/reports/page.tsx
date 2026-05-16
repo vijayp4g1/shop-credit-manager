@@ -163,6 +163,27 @@ export default async function Reports() {
           </div>
         </section>
 
+        {/* Daily Day Book Entry */}
+        <section className="animate-fade-in-up opacity-0" style={{ animationDelay: '100ms' }}>
+          <Link href="/reports/daily" className="group block relative overflow-hidden bg-gradient-to-r from-primary to-primary-container p-6 rounded-[32px] shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <div className="absolute right-0 top-0 w-32 h-full bg-white/10 skew-x-[-20deg] translate-x-10 group-hover:-translate-x-full transition-transform duration-1000"></div>
+            <div className="flex items-center justify-between relative z-10">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-white border border-white/30 backdrop-blur-md">
+                  <span className="material-symbols-outlined text-[24px]">view_day</span>
+                </div>
+                <div>
+                  <h3 className="font-headline-sm text-lg font-bold text-on-primary">Daily Day Book</h3>
+                  <p className="text-on-primary/80 text-xs font-bold uppercase tracking-widest mt-0.5">View date-wise transactions</p>
+                </div>
+              </div>
+              <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white backdrop-blur-md transition-transform group-hover:scale-110">
+                <span className="material-symbols-outlined text-[20px]">chevron_right</span>
+              </div>
+            </div>
+          </Link>
+        </section>
+
         {/* Top Defaulters / Follow Ups */}
         <section className="animate-fade-in-up opacity-0" style={{ animationDelay: '150ms' }}>
           <div className="flex items-center justify-between mb-5 px-2">
