@@ -237,6 +237,32 @@ export default function AddTransactionSheet({
                       placeholder="0"
                     />
                   </div>
+                  
+                  {/* Quick Amount Increment Chips */}
+                  <div className="flex gap-2 mt-2.5 overflow-x-auto pb-1 scrollbar-hide">
+                    {[100, 500, 1000, 2000, 5000].map((preset) => (
+                      <button
+                        type="button"
+                        key={preset}
+                        onClick={() => setAmount(prev => String((Number(prev) || 0) + preset))}
+                        className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-all active:scale-95 shrink-0 shadow-2xs cursor-pointer flex items-center gap-0.5 ${
+                          isUdhar
+                            ? "bg-udhar-destructive/10 hover:bg-udhar-destructive/20 text-udhar-destructive border-udhar-destructive/30"
+                            : "bg-jama-success/10 hover:bg-jama-success/20 text-jama-success border-jama-success/30"
+                        }`}
+                      >
+                        <span className="text-[10px] opacity-70">+</span>₹{preset.toLocaleString("en-IN")}
+                      </button>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => setAmount("")}
+                      className="px-3 py-1.5 rounded-full text-xs font-bold border bg-surface-container hover:bg-surface-container-high text-on-surface-variant border-outline-variant/30 transition-all active:scale-95 shrink-0 cursor-pointer ml-auto"
+                    >
+                      Clear
+                    </button>
+                  </div>
+
                   {transactionType === "PAYMENT" && balance !== undefined && Number(amount) > balance && (
                     <p className="text-xs text-amber-500 dark:text-amber-400 font-bold mt-2 ml-1 flex items-center gap-1.5 animate-fade-in-up">
                       <span className="material-symbols-outlined text-[16px]">warning</span>
@@ -270,6 +296,22 @@ export default function AddTransactionSheet({
                     className="w-full px-4 py-3.5 bg-surface-container-lowest border-2 border-outline-variant/30 rounded-[20px] shadow-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-sm font-semibold min-h-[80px] outline-none resize-none text-on-surface"
                     placeholder="What was this for?"
                   />
+                  <div className="flex flex-wrap gap-1.5 mt-2.5">
+                    {(isUdhar 
+                      ? ["Saree Purchase", "Pattu Saree", "Dress Material", "Matching Blouse", "Silk Saree"] 
+                      : ["Cash Settlement", "UPI / GPay", "PhonePe Transfer", "Part Payment", "Full Account Clear"]
+                    ).map((tag) => (
+                      <button
+                        type="button"
+                        key={tag}
+                        onClick={() => setNotes(prev => prev ? `${prev}, ${tag}` : tag)}
+                        className="px-3 py-1 bg-surface-container hover:bg-surface-container-high text-on-surface-variant rounded-full text-xs font-semibold border border-outline-variant/30 transition-all cursor-pointer active:scale-95 flex items-center gap-1 shadow-2xs"
+                      >
+                        <span className="material-symbols-outlined text-[12px] opacity-70">{isUdhar ? "checkroom" : "payments"}</span>
+                        {tag}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 

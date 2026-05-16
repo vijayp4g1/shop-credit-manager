@@ -30,3 +30,15 @@ export interface Transaction {
   created_at: string;
   customers?: { name: string };
 }
+
+export interface Expense {
+  id: string;
+  shop_id: string;
+  category: string;
+  amount: number;
+  description?: string;
+  payment_mode?: string;
+  expense_date: string;
+  created_by: string;
+  created_at: string;
+}

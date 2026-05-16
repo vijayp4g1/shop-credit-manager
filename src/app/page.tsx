@@ -2,6 +2,7 @@ import TransactionFab from "@/components/TransactionFab";
 import HeaderSearchButton from "@/components/HeaderSearchButton";
 import QuickActionButtons from "@/components/QuickActionButtons";
 import AddCustomerSheet from "@/components/AddCustomerSheet";
+import AddExpenseSheet from "@/components/AddExpenseSheet";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -246,6 +247,7 @@ export default async function Dashboard() {
 
       <TransactionFab shopId={shop.id} customers={customers || []} />
       <AddCustomerSheet shopId={shop.id} hideFab />
+      <AddExpenseSheet shopId={shop.id} hideFab />
     </div>
   );
 }

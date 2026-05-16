@@ -15,6 +15,7 @@ export default function BottomNavBar() {
     { href: "/", icon: "dashboard", label: "Dashboard", filledIcon: true },
     { href: "/customers", icon: "group", label: "Customers", filledIcon: false },
     { href: "/ledger", icon: "receipt_long", label: "Ledger", filledIcon: false },
+    { href: "/expenses", icon: "account_balance_wallet", label: "Expenses", filledIcon: false },
     { href: "/reports", icon: "analytics", label: "Reports", filledIcon: false },
   ];
 
