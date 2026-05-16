@@ -33,7 +33,7 @@ export default async function CustomerLedger({
   ] = await Promise.all([
     supabase
       .from("customers")
-      .select("id, name, phone, balance, notes, address")
+      .select("id, name, phone, balance, address")
       .eq("id", id)
       .eq("shop_id", shop.id)
       .is("deleted_at", null)
