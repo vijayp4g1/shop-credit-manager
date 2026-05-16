@@ -66,7 +66,7 @@ export default async function ExpensesPage() {
         <ExpenseList expenses={validExpenses} totalMonthlyExpenses={totalMonthlyExpenses} hasTableError={hasTableError} />
       </main>
 
-      <AddExpenseSheet shopId={shop.id} />
+      <AddExpenseSheet shopId={shop.id} hideFab />
     </div>
   );
 }

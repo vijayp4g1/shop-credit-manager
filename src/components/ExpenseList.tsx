@@ -157,16 +157,6 @@ export default function ExpenseList({ expenses, totalMonthlyExpenses, hasTableEr
 
   const topCategory = categorySummary[0] || { name: "None", amount: 0 };
 
-  const categories = useMemo(() => {
-    const list = ["ALL"];
-    expenses.forEach((ex) => {
-      if (!list.includes(ex.category)) {
-        list.push(ex.category);
-      }
-    });
-    return list;
-  }, [expenses]);
-
   // 3. Search and Sort & Payment Mode Filter
   const finalFilteredExpenses = useMemo(() => {
     let result = timeFilteredExpenses;
@@ -197,7 +187,7 @@ export default function ExpenseList({ expenses, totalMonthlyExpenses, hasTableEr
     });
   }, [timeFilteredExpenses, selectedExpenseCategory, paymentModeFilter, searchQuery, sortBy]);
 
-  // Group by Date for stunning timeline view
+  // Group by Date for timeline view
   const groupedExpenses = useMemo(() => {
     const groups: Record<string, { label: string; dateKey: string; expenses: Expense[]; total: number }> = {};
     
@@ -279,7 +269,7 @@ export default function ExpenseList({ expenses, totalMonthlyExpenses, hasTableEr
         </div>
       )}
 
-      {/* Time Horizon Selector */}
+      {/* Time Horizon Selector - Clean pill bar */}
       <section className="flex items-center justify-between bg-surface-container-lowest p-1.5 rounded-full border border-outline-variant/30 shadow-xs animate-fade-in-up">
         <div className="flex w-full gap-1">
           <button
@@ -287,8 +277,8 @@ export default function ExpenseList({ expenses, totalMonthlyExpenses, hasTableEr
             onClick={() => setTimeFilter("month")}
             className={`flex-1 py-2.5 px-3 rounded-full text-xs font-black transition-all cursor-pointer text-center tracking-wider ${
               timeFilter === "month"
-                ? "bg-gradient-to-tr from-amber-500 to-amber-600 text-white shadow-md scale-[1.02]"
-                : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container/50"
+                ? "bg-amber-500 text-white shadow-md scale-[1.02]"
+                : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container/50 font-bold"
             }`}
           >
             This Month
@@ -298,8 +288,8 @@ export default function ExpenseList({ expenses, totalMonthlyExpenses, hasTableEr
             onClick={() => setTimeFilter("30days")}
             className={`flex-1 py-2.5 px-3 rounded-full text-xs font-black transition-all cursor-pointer text-center tracking-wider ${
               timeFilter === "30days"
-                ? "bg-gradient-to-tr from-amber-500 to-amber-600 text-white shadow-md scale-[1.02]"
-                : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container/50"
+                ? "bg-amber-500 text-white shadow-md scale-[1.02]"
+                : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container/50 font-bold"
             }`}
           >
             Last 30 Days
@@ -309,8 +299,8 @@ export default function ExpenseList({ expenses, totalMonthlyExpenses, hasTableEr
             onClick={() => setTimeFilter("all")}
             className={`flex-1 py-2.5 px-3 rounded-full text-xs font-black transition-all cursor-pointer text-center tracking-wider ${
               timeFilter === "all"
-                ? "bg-gradient-to-tr from-amber-500 to-amber-600 text-white shadow-md scale-[1.02]"
-                : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container/50"
+                ? "bg-amber-500 text-white shadow-md scale-[1.02]"
+                : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container/50 font-bold"
             }`}
           >
             All Time
@@ -318,60 +308,66 @@ export default function ExpenseList({ expenses, totalMonthlyExpenses, hasTableEr
         </div>
       </section>
 
-      {/* Overview Hero Card */}
-      <section className="animate-fade-in-up opacity-0" style={{ animationDelay: "50ms" }}>
-        <div className="group relative overflow-hidden bg-gradient-to-br from-surface-container-lowest via-surface-container/30 to-amber-500/5 border border-outline-variant/40 p-6 rounded-[36px] shadow-sm hover:shadow-md transition-all duration-300">
-          <div className="absolute -top-24 -right-24 w-56 h-56 bg-amber-500/15 rounded-full blur-[50px] pointer-events-none transition-transform duration-700 group-hover:scale-130"></div>
+      {/* Primary Metrics Bento Grid */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fade-in-up opacity-0" style={{ animationDelay: "50ms" }}>
+        {/* Main Outflow Summary Card */}
+        <div className="group relative overflow-hidden bg-gradient-to-br from-surface-container-lowest via-surface-container/30 to-amber-500/10 border border-outline-variant/40 p-6 rounded-[32px] shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+          <div className="absolute -top-20 -right-20 w-48 h-48 bg-amber-500/15 rounded-full blur-[40px] pointer-events-none transition-transform duration-700 group-hover:scale-130"></div>
           
-          <div className="flex items-center justify-between mb-4 relative z-10">
-            <div className="flex items-center gap-3 text-on-surface-variant">
-              <div className="w-11 h-11 rounded-full bg-amber-500/15 flex items-center justify-center border border-amber-500/30 shadow-xs text-amber-500 font-bold">
-                <span className="material-symbols-outlined text-[22px]">account_balance_wallet</span>
+          <div className="flex items-center justify-between mb-6 relative z-10">
+            <div className="flex items-center gap-3.5 text-on-surface-variant">
+              <div className="w-12 h-12 rounded-full bg-amber-500/15 flex items-center justify-center border border-amber-500/30 shadow-xs text-amber-500 font-bold shrink-0">
+                <span className="material-symbols-outlined text-[24px]">account_balance_wallet</span>
               </div>
               <div>
-                <span className="font-extrabold text-xs uppercase tracking-widest text-on-surface-variant block">
+                <span className="font-extrabold text-xs uppercase tracking-widest text-on-surface block leading-tight">
                   {timeFilter === "month" ? "Monthly Outflow" : timeFilter === "30days" ? "30-Day Outflow" : "Total Outflow"}
                 </span>
-                <span className="text-[10px] text-on-surface-variant font-medium">Realtime shop expense tracking</span>
+                <span className="text-[11px] text-on-surface-variant font-medium">Realtime store tracking</span>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={handleShareReport}
-                className="px-3.5 py-2 rounded-full bg-surface-container-highest/60 hover:bg-amber-500/20 border border-outline-variant/40 hover:border-amber-500/30 text-on-surface font-extrabold text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-2xs"
-                title="Export report for WhatsApp"
-              >
-                <span className="material-symbols-outlined text-[16px] text-amber-500">share</span>
-                <span className="hidden sm:inline">Share Report</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => openAddExpenseModal()}
-                className="px-4 py-2 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-extrabold text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-md"
-              >
-                <span className="material-symbols-outlined text-[16px]">add</span>
-                Record
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={handleShareReport}
+              className="w-10 h-10 rounded-full bg-surface-container hover:bg-amber-500/20 border border-outline-variant/40 hover:border-amber-500/30 text-on-surface font-bold flex items-center justify-center transition-all active:scale-95 cursor-pointer shadow-2xs group"
+              title="Share Report"
+            >
+              <span className="material-symbols-outlined text-[18px] text-amber-500 group-hover:scale-110 transition-transform">share</span>
+            </button>
           </div>
 
-          <div className="relative z-10 mb-6">
-            <div className="font-amount-display text-[48px] font-black text-amber-600 dark:text-amber-400 tracking-tighter leading-none mb-2 drop-shadow-2xs">
+          <div className="relative z-10 mt-auto">
+            <div className="font-amount-display text-[42px] font-black text-amber-600 dark:text-amber-400 tracking-tighter leading-none mb-2">
               ₹{currentTotalSpend.toLocaleString("en-IN")}
             </div>
             <div className="text-xs text-on-surface-variant flex items-center gap-1.5 font-bold uppercase tracking-wider opacity-90">
               <span className="material-symbols-outlined text-[16px] text-amber-500">insights</span>
-              <span>{timeFilteredExpenses.length} receipts recorded in this timeframe</span>
+              <span>{timeFilteredExpenses.length} receipts recorded</span>
             </div>
           </div>
+        </div>
 
-          {/* Monthly Budget Progress Section */}
-          {timeFilter === "month" && (
-            <div className="relative z-10 mb-6 bg-surface/60 backdrop-blur-md p-4 rounded-2xl border border-outline-variant/30 shadow-2xs">
-              <div className="flex items-center justify-between text-xs font-black uppercase tracking-wider text-on-surface mb-2">
+        {/* Action & Budget Card / Side Bento */}
+        <div className="flex flex-col gap-4">
+          {/* Quick Record Button Card */}
+          <div className="bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 p-6 rounded-[32px] shadow-md hover:shadow-lg transition-all text-white flex items-center justify-between cursor-pointer active:scale-[0.98] group" onClick={() => openAddExpenseModal()}>
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-white border border-white/30 shadow-inner group-hover:scale-110 transition-transform">
+                <span className="material-symbols-outlined text-[26px]">add</span>
+              </div>
+              <div>
+                <h3 className="text-lg font-black tracking-tight leading-tight">Record New Expense</h3>
+                <p className="text-xs text-white/80 font-medium">Log bills, rent, salary or chai expenses</p>
+              </div>
+            </div>
+            <span className="material-symbols-outlined text-[24px] text-white/80 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+          </div>
+
+          {/* Monthly Budget Card */}
+          {timeFilter === "month" ? (
+            <div className="bg-surface-container-lowest/80 border border-outline-variant/40 p-5 rounded-[28px] shadow-2xs flex flex-col justify-between flex-1">
+              <div className="flex items-center justify-between text-xs font-black uppercase tracking-wider text-on-surface mb-3">
                 <div className="flex items-center gap-1.5">
                   <span className="material-symbols-outlined text-[16px] text-amber-500">target</span>
                   <span>Monthly Spend Limit Budget</span>
@@ -383,15 +379,16 @@ export default function ExpenseList({ expenses, totalMonthlyExpenses, hasTableEr
                       value={inputBudget}
                       onChange={(e) => setInputBudget(e.target.value)}
                       placeholder={String(budgetAmount)}
-                      className="w-24 px-2 py-0.5 text-right bg-surface border border-amber-500/50 rounded font-amount-display text-xs font-bold text-amber-600 outline-none"
+                      className="w-20 px-2 py-0.5 text-right bg-surface border border-amber-500/50 rounded font-amount-display text-xs font-bold text-amber-600 outline-none"
                       autoFocus
                     />
-                    <button onClick={handleSaveBudget} className="bg-amber-500 text-white px-2 py-0.5 rounded text-[10px] font-black">Save</button>
+                    <button onClick={handleSaveBudget} className="bg-amber-500 text-white px-2 py-0.5 rounded text-[10px] font-black cursor-pointer">Save</button>
                   </div>
                 ) : (
                   <button 
                     onClick={() => { setInputBudget(String(budgetAmount)); setIsEditingBudget(true); }}
-                    className="text-amber-600 dark:text-amber-400 font-extrabold hover:underline flex items-center gap-0.5 text-[11px]"
+                    className="text-amber-600 dark:text-amber-400 font-extrabold hover:underline flex items-center gap-0.5 text-[11px] cursor-pointer"
+                    title="Edit monthly budget"
                   >
                     <span>₹{budgetAmount.toLocaleString("en-IN")}</span>
                     <span className="material-symbols-outlined text-[12px]">edit</span>
@@ -399,83 +396,30 @@ export default function ExpenseList({ expenses, totalMonthlyExpenses, hasTableEr
                 )}
               </div>
 
-              <div className="w-full h-3 bg-surface-container-high rounded-full overflow-hidden flex shadow-inner mb-2">
+              <div className="w-full h-3 bg-surface-container-high rounded-full overflow-hidden flex shadow-inner mb-2.5">
                 <div
                   style={{ width: `${budgetPercentage}%` }}
-                  className={`h-full transition-all duration-1000 font-bold ${
+                  className={`h-full transition-all duration-1000 ${
                     budgetPercentage >= 100 ? "bg-red-500" : budgetPercentage >= 85 ? "bg-amber-500" : "bg-emerald-500"
                   }`}
                 />
               </div>
 
-              <div className="flex justify-between text-[11px] font-extrabold">
-                <span className="text-on-surface-variant">Spent: ₹{currentTotalSpend.toLocaleString("en-IN")} ({budgetPercentage.toFixed(0)}%)</span>
-                <span className={budgetRemaining === 0 ? "text-error font-black" : "text-emerald-600 dark:text-emerald-400 font-black"}>
-                  {budgetRemaining === 0 ? "Budget Exceeded!" : `₹${budgetRemaining.toLocaleString("en-IN")} left`}
+              <div className="flex justify-between text-xs font-black">
+                <span className="text-on-surface-variant">Spent: {budgetPercentage.toFixed(0)}%</span>
+                <span className={budgetRemaining === 0 ? "text-error" : "text-emerald-600 dark:text-emerald-400"}>
+                  {budgetRemaining === 0 ? "Over Budget!" : `₹${budgetRemaining.toLocaleString("en-IN")} left`}
                 </span>
               </div>
             </div>
-          )}
-
-          {/* Visual Percentage Breakdown Bar */}
-          {categorySummary.length > 0 && (
-            <div className="relative z-10 pt-5 mt-2 border-t border-outline-variant/30 font-sans">
-              <div className="flex justify-between items-center text-xs font-black text-on-surface uppercase tracking-wider mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-amber-500/15 flex items-center justify-center text-amber-500 border border-amber-500/30 shadow-2xs">
-                    <span className="material-symbols-outlined text-[16px]">pie_chart</span>
-                  </div>
-                  <span>Spend Allocation Breakdown</span>
+          ) : (
+            <div className="bg-surface-container-lowest/80 border border-outline-variant/40 p-5 rounded-[28px] shadow-2xs flex items-center justify-between flex-1 text-on-surface-variant">
+              <div className="flex items-center gap-3">
+                <span className="material-symbols-outlined text-[24px] text-amber-500">date_range</span>
+                <div>
+                  <h4 className="font-extrabold text-xs uppercase tracking-widest text-on-surface">Timeframe Active</h4>
+                  <p className="text-xs font-medium mt-0.5">Showing records for {timeFilter === "30days" ? "last 30 days" : "entire history"}</p>
                 </div>
-                <span className="text-[10px] font-extrabold text-on-surface-variant bg-surface-container-highest/50 px-2.5 py-1 rounded-full uppercase tracking-widest">
-                  {categorySummary.length} {categorySummary.length === 1 ? "Category" : "Categories"}
-                </span>
-              </div>
-
-              {/* High Fidelity Stacked Bar */}
-              <div className="w-full h-6 bg-surface-container/60 backdrop-blur-sm rounded-full overflow-hidden flex p-1 gap-1 border border-outline-variant/30 shadow-inner mb-4">
-                {categorySummary.map((item) => (
-                  <button
-                    type="button"
-                    key={item.name}
-                    onClick={() => setSelectedExpenseCategory(selectedExpenseCategory === item.name ? "ALL" : item.name)}
-                    title={`${item.name}: ₹${item.amount.toLocaleString("en-IN")} (${item.percentage.toFixed(1)}%)`}
-                    style={{ width: `${item.percentage}%`, backgroundColor: item.color }}
-                    className={`h-full rounded-full transition-all duration-500 hover:opacity-85 cursor-pointer relative group ${
-                      selectedExpenseCategory === item.name ? "ring-2 ring-white scale-105 shadow-sm" : ""
-                    }`}
-                  />
-                ))}
-              </div>
-
-              {/* Interactive Category Breakdown Cards Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-                {categorySummary.map((item) => {
-                  const isSelected = selectedExpenseCategory === item.name;
-                  return (
-                    <button
-                      type="button"
-                      key={item.name}
-                      onClick={() => setSelectedExpenseCategory(isSelected ? "ALL" : item.name)}
-                      className={`p-3 rounded-2xl border flex items-center justify-between text-left transition-all duration-200 cursor-pointer active:scale-95 ${
-                        isSelected
-                          ? "bg-amber-500/15 border-amber-500 shadow-xs scale-[1.02] ring-1 ring-amber-500/50"
-                          : "bg-surface/60 border-outline-variant/40 hover:bg-surface-container-lowest hover:border-outline-variant/70"
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-2">
-                        <span className="w-3.5 h-3.5 rounded-full shrink-0 shadow-2xs border border-white/20" style={{ backgroundColor: item.color }} />
-                        <span className={`text-xs font-black truncate ${isSelected ? "text-amber-600 dark:text-amber-400 font-extrabold" : "text-on-surface"}`}>{item.name}</span>
-                      </div>
-                      <div className="text-right shrink-0">
-                        <div className="text-xs font-black text-on-surface">₹{item.amount.toLocaleString("en-IN")}</div>
-                        <div className="text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded ml-auto mt-0.5 w-fit inline-block">
-                          {item.percentage.toFixed(0)}%
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })}
               </div>
             </div>
           )}
@@ -494,14 +438,14 @@ export default function ExpenseList({ expenses, totalMonthlyExpenses, hasTableEr
               ₹{Math.round(dailyAverage).toLocaleString("en-IN")}
               <span className="text-xs font-bold text-on-surface-variant ml-1">/day</span>
             </div>
-            <p className="text-[10px] font-semibold text-on-surface-variant mt-1">Based on {daysInFilter} active tracking days</p>
+            <p className="text-[10px] font-semibold text-on-surface-variant mt-1">Based on {daysInFilter} active days</p>
           </div>
         </div>
 
         <div className="bg-gradient-to-br from-surface-container-lowest to-surface-container/30 border border-outline-variant/40 rounded-[28px] p-5 flex flex-col justify-between shadow-2xs hover:shadow-sm transition-all">
           <div className="flex items-center gap-2 text-on-surface-variant mb-2">
             <span className="material-symbols-outlined text-[18px] text-red-500">local_fire_department</span>
-            <span className="text-xs font-extrabold uppercase tracking-widest text-on-surface truncate">Top Drain Category</span>
+            <span className="text-xs font-extrabold uppercase tracking-widest text-on-surface truncate">Top Outflow Category</span>
           </div>
           <div>
             <div className="font-amount-display text-xl font-black text-udhar-destructive truncate tracking-tight">
@@ -514,8 +458,8 @@ export default function ExpenseList({ expenses, totalMonthlyExpenses, hasTableEr
         </div>
       </section>
 
-      {/* Search Bar & Sorting Controls */}
-      <section className="space-y-3.5 animate-fade-in-up opacity-0" style={{ animationDelay: "150ms" }}>
+      {/* Compact Search & Filter Controls */}
+      <section className="space-y-3 animate-fade-in-up opacity-0" style={{ animationDelay: "150ms" }}>
         <div className="flex flex-col sm:flex-row gap-2.5">
           <div className="relative group flex-1">
             <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-on-surface-variant group-focus-within:text-amber-500 transition-colors">
@@ -524,14 +468,14 @@ export default function ExpenseList({ expenses, totalMonthlyExpenses, hasTableEr
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-14 pl-12 pr-4 bg-surface/85 backdrop-blur-md border border-outline-variant/40 rounded-2xl shadow-xs focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 focus:bg-surface-container-lowest transition-all text-xs font-bold placeholder:text-on-surface-variant/50 outline-none"
-              placeholder="Search expenses by vendor, tag, note, or category..."
+              className="w-full h-13 pl-12 pr-10 bg-surface/85 backdrop-blur-md border border-outline-variant/40 rounded-2xl shadow-xs focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 focus:bg-surface-container-lowest transition-all text-xs font-bold placeholder:text-on-surface-variant/50 outline-none"
+              placeholder="Search expenses by note, vendor, tag, or category..."
               type="text"
             />
             {searchQuery && (
               <button 
                 onClick={() => setSearchQuery("")}
-                className="absolute inset-y-0 right-4 flex items-center text-on-surface-variant hover:text-on-surface"
+                className="absolute inset-y-0 right-4 flex items-center text-on-surface-variant hover:text-on-surface cursor-pointer"
               >
                 <span className="material-symbols-outlined text-[18px]">close</span>
               </button>
@@ -541,7 +485,7 @@ export default function ExpenseList({ expenses, totalMonthlyExpenses, hasTableEr
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
-            className="h-14 px-4 bg-surface-container-lowest border border-outline-variant/40 rounded-2xl text-xs font-black text-on-surface outline-none focus:border-amber-500 shadow-xs cursor-pointer"
+            className="h-13 px-4 bg-surface-container-lowest border border-outline-variant/40 rounded-2xl text-xs font-black text-on-surface outline-none focus:border-amber-500 shadow-xs cursor-pointer"
           >
             <option value="date_desc">Latest Date First</option>
             <option value="amount_desc">Highest Amount ₹</option>
@@ -549,7 +493,7 @@ export default function ExpenseList({ expenses, totalMonthlyExpenses, hasTableEr
           </select>
         </div>
 
-        {/* Payment Mode Segmented Filter */}
+        {/* Payment Mode Horizontal Selector */}
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
           {(["ALL", "CASH", "UPI", "BANK TRANSFER"] as const).map((mode) => {
             const isSelected = paymentModeFilter === mode;
@@ -569,7 +513,7 @@ export default function ExpenseList({ expenses, totalMonthlyExpenses, hasTableEr
                 }`}
               >
                 <span className="material-symbols-outlined text-[16px]">{modeIcons[mode]}</span>
-                <span>{mode === "ALL" ? "All Modes" : mode}</span>
+                <span>{mode === "ALL" ? "All Payment Modes" : mode}</span>
                 <span className={`px-1.5 py-0.5 rounded-full text-[10px] ml-1 font-black ${isSelected ? "bg-white/20 text-white" : "bg-surface-container-high text-on-surface"}`}>
                   ₹{total.toLocaleString("en-IN")}
                 </span>
@@ -577,36 +521,77 @@ export default function ExpenseList({ expenses, totalMonthlyExpenses, hasTableEr
             );
           })}
         </div>
+      </section>
 
-        {/* Filter Category Pills */}
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide pt-1">
-          {categories.map((cat) => {
-            const isSelected = selectedExpenseCategory === cat;
-            const total = cat === "ALL" ? currentTotalSpend : timeFilteredExpenses.filter(e => e.category === cat).reduce((acc, curr) => acc + Number(curr.amount), 0);
-            
-            return (
+      {/* Spend Allocation & Category Breakdown Cards */}
+      {categorySummary.length > 0 && (
+        <section className="bg-surface-container-lowest/40 border border-outline-variant/30 p-4 rounded-3xl shadow-2xs animate-fade-in-up opacity-0" style={{ animationDelay: "180ms" }}>
+          <div className="flex justify-between items-center text-xs font-black text-on-surface uppercase tracking-wider mb-3 px-1">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-amber-500/15 flex items-center justify-center text-amber-500 border border-amber-500/30 shadow-2xs">
+                <span className="material-symbols-outlined text-[16px]">pie_chart</span>
+              </div>
+              <span>Category Allocation & Filters</span>
+            </div>
+            <div className="flex items-center gap-2">
+              {selectedExpenseCategory !== "ALL" && (
+                <button onClick={() => setSelectedExpenseCategory("ALL")} className="text-[10px] text-amber-600 dark:text-amber-400 font-extrabold hover:underline cursor-pointer">
+                  Show All
+                </button>
+              )}
+              <span className="text-[10px] font-extrabold text-on-surface-variant bg-surface-container-highest/50 px-2.5 py-1 rounded-full uppercase tracking-widest">
+                {categorySummary.length} {categorySummary.length === 1 ? "Category" : "Categories"}
+              </span>
+            </div>
+          </div>
+
+          {/* High Fidelity Stacked Proportion Bar */}
+          <div className="w-full h-5 bg-surface-container/60 backdrop-blur-sm rounded-full overflow-hidden flex p-1 gap-1 border border-outline-variant/30 shadow-inner mb-4">
+            {categorySummary.map((item) => (
               <button
                 type="button"
-                key={cat}
-                onClick={() => setSelectedExpenseCategory(cat)}
-                className={`px-4 py-2.5 rounded-full text-xs font-black tracking-wider transition-all duration-200 shrink-0 border flex items-center gap-1.5 cursor-pointer ${
-                  isSelected
-                    ? "bg-amber-500 text-white border-amber-500 shadow-md scale-105"
-                    : "bg-surface-container-lowest text-on-surface-variant border-outline-variant/40 hover:bg-surface-container"
+                key={item.name}
+                onClick={() => setSelectedExpenseCategory(selectedExpenseCategory === item.name ? "ALL" : item.name)}
+                title={`${item.name}: ₹${item.amount.toLocaleString("en-IN")} (${item.percentage.toFixed(1)}%)`}
+                style={{ width: `${item.percentage}%`, backgroundColor: item.color }}
+                className={`h-full rounded-full transition-all duration-500 hover:opacity-85 cursor-pointer relative group ${
+                  selectedExpenseCategory === item.name ? "ring-2 ring-white scale-105 shadow-sm" : ""
                 }`}
-              >
-                <span className="material-symbols-outlined text-[16px]">
-                  {cat === "ALL" ? "category" : CATEGORY_ICONS[cat] || "receipt"}
-                </span>
-                <span className="uppercase">{cat}</span>
-                <span className={`px-2 py-0.5 rounded-full text-[10px] ml-1 font-black ${isSelected ? "bg-white/20 text-white" : "bg-surface-container-high text-on-surface"}`}>
-                  ₹{total.toLocaleString("en-IN")}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </section>
+              />
+            ))}
+          </div>
+
+          {/* Interactive Category Breakdown Cards Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            {categorySummary.map((item) => {
+              const isSelected = selectedExpenseCategory === item.name;
+              return (
+                <button
+                  type="button"
+                  key={item.name}
+                  onClick={() => setSelectedExpenseCategory(isSelected ? "ALL" : item.name)}
+                  className={`p-3 rounded-2xl border flex items-center justify-between text-left transition-all duration-200 cursor-pointer active:scale-95 ${
+                    isSelected
+                      ? "bg-amber-500 text-white border-amber-500 shadow-md scale-[1.02]"
+                      : "bg-surface/80 border-outline-variant/40 hover:bg-surface-container hover:border-outline-variant/70"
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-2">
+                    <span className={`w-3.5 h-3.5 rounded-full shrink-0 shadow-2xs ${isSelected ? "border-2 border-white" : ""}`} style={{ backgroundColor: item.color }} />
+                    <span className={`text-xs font-black truncate ${isSelected ? "text-white font-extrabold" : "text-on-surface"}`}>{item.name}</span>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <div className={`text-xs font-black ${isSelected ? "text-white" : "text-on-surface"}`}>₹{item.amount.toLocaleString("en-IN")}</div>
+                    <div className={`text-[10px] font-bold px-1.5 py-0.5 rounded ml-auto mt-0.5 w-fit inline-block ${isSelected ? "bg-white/20 text-white" : "bg-amber-500/10 text-amber-600 dark:text-amber-400"}`}>
+                      {item.percentage.toFixed(0)}%
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {/* Expense List Grouped by Date */}
       <section className="animate-fade-in-up opacity-0 space-y-4" style={{ animationDelay: "200ms" }}>
@@ -621,7 +606,7 @@ export default function ExpenseList({ expenses, totalMonthlyExpenses, hasTableEr
           {(selectedExpenseCategory !== "ALL" || paymentModeFilter !== "ALL" || searchQuery) && (
             <button
               onClick={() => { setSelectedExpenseCategory("ALL"); setPaymentModeFilter("ALL"); setSearchQuery(""); }}
-              className="text-[11px] font-black text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1"
+              className="text-[11px] font-black text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1 cursor-pointer"
             >
               <span>Reset Filters</span>
             </button>
@@ -633,18 +618,18 @@ export default function ExpenseList({ expenses, totalMonthlyExpenses, hasTableEr
             groupedExpenses.map((group) => (
               <div key={group.dateKey} className="space-y-3 bg-surface-container-lowest/40 rounded-3xl p-3 sm:p-4 border border-outline-variant/20 shadow-2xs">
                 {/* Daily Subheader */}
-                <div className="flex items-center justify-between px-3 py-2 bg-surface-container-low rounded-2xl border border-outline-variant/30">
+                <div className="flex items-center justify-between px-3.5 py-2.5 bg-surface-container-low rounded-2xl border border-outline-variant/30 shadow-2xs">
                   <div className="flex items-center gap-2">
                     <span className="material-symbols-outlined text-[16px] text-amber-500">calendar_today</span>
                     <span className="text-xs font-black text-on-surface tracking-wider">{group.label}</span>
                   </div>
-                  <div className="text-xs font-black text-amber-600 dark:text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
+                  <div className="text-xs font-black text-amber-600 dark:text-amber-400 bg-amber-500/10 px-3.5 py-1 rounded-full border border-amber-500/20">
                     Subtotal: ₹{group.total.toLocaleString("en-IN")}
                   </div>
                 </div>
 
                 <div className="space-y-2.5">
-                  {group.expenses.map((ex, index) => {
+                  {group.expenses.map((ex) => {
                     const icon = CATEGORY_ICONS[ex.category] || "receipt";
                     const color = CATEGORY_COLORS[ex.category] || "#94A3B8";
 
@@ -728,7 +713,7 @@ export default function ExpenseList({ expenses, totalMonthlyExpenses, hasTableEr
                 {searchQuery || selectedExpenseCategory !== "ALL" || paymentModeFilter !== "ALL" ? "No matching expenses found" : "No expenses recorded yet"}
               </p>
               <p className="text-xs font-semibold text-on-surface-variant max-w-[240px] mx-auto opacity-80 mb-4">
-                {searchQuery || selectedExpenseCategory !== "ALL" || paymentModeFilter !== "ALL" ? "Try clearing your active filters or search query." : "Tap the Record button above or the + icon below to log your store expenses."}
+                {searchQuery || selectedExpenseCategory !== "ALL" || paymentModeFilter !== "ALL" ? "Try clearing your active filters or search query." : "Tap the Record button above to log your store expenses."}
               </p>
               {(searchQuery || selectedExpenseCategory !== "ALL" || paymentModeFilter !== "ALL") && (
                 <button
