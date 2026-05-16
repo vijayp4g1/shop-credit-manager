@@ -55,18 +55,14 @@ export default function DeleteCustomerButton({ customerId }: { customerId: strin
         <span className="material-symbols-outlined text-[20px] text-on-surface-variant hover:text-error">delete</span>
       </button>
 
-      {isPortalMounted && typeof document !== 'undefined' && createPortal(
-        <div className={`fixed inset-0 z-[120] flex items-center justify-center p-6 ${showConfirm ? "pointer-events-auto" : "pointer-events-none"}`}>
+      {isPortalMounted && showConfirm && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-6 pointer-events-auto animate-fade-in">
           <div
-            className={`fixed inset-0 bg-black/50 z-[120] transition-opacity duration-300 backdrop-blur-sm ${showConfirm ? "opacity-100" : "opacity-0"}`}
+            className="fixed inset-0 bg-black/50 z-[120] backdrop-blur-sm animate-fade-in"
             onClick={() => setShowConfirm(false)}
           />
 
-          <div
-            className={`bg-surface rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-outline-variant/30 z-[121] transition-all duration-300 transform ${
-              showConfirm ? "scale-100 opacity-100" : "scale-95 opacity-0"
-            }`}
-          >
+          <div className="bg-surface rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-outline-variant/30 z-[121] transform scale-100 opacity-100 animate-scale-up">
             <div className="w-14 h-14 bg-error-container rounded-full flex items-center justify-center mx-auto mb-4 border border-error/20 shadow-inner">
               <span className="material-symbols-outlined text-[32px] text-error">person_remove</span>
             </div>

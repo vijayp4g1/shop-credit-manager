@@ -131,22 +131,16 @@ export default function AddExpenseSheet({ shopId, hideFab }: { shopId: string; h
         </button>
       )}
 
-      {isPortalMounted && typeof document !== 'undefined' && createPortal(
-        <div className={`fixed inset-0 z-[100] font-sans ${isOpen ? "pointer-events-auto" : "pointer-events-none"}`}>
+      {isPortalMounted && isOpen && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[100] font-sans pointer-events-auto animate-fade-in">
           {/* Backdrop */}
           <div 
-            className={`fixed inset-0 bg-black/60 z-[100] transition-opacity duration-300 backdrop-blur-md ${
-              isOpen ? "opacity-100" : "opacity-0"
-            }`}
+            className="fixed inset-0 bg-black/60 z-[100] backdrop-blur-md animate-fade-in"
             onClick={handleClose}
           />
 
           {/* Bottom Sheet Modal */}
-          <div
-            className={`fixed bottom-0 left-0 w-full bg-surface dark:bg-surface-dim rounded-t-[36px] shadow-[0_-10px_50px_rgba(0,0,0,0.3)] z-[101] transition-transform duration-300 ease-out transform max-h-[92dvh] flex flex-col border-t border-outline-variant/30 ${
-              isOpen ? "translate-y-0" : "translate-y-full"
-            }`}
-          >
+          <div className="fixed bottom-0 left-0 w-full bg-surface dark:bg-surface-dim rounded-t-[36px] shadow-[0_-10px_50px_rgba(0,0,0,0.3)] z-[101] transition-transform duration-300 ease-out transform max-h-[92dvh] flex flex-col border-t border-outline-variant/30 animate-slide-up">
             <div className="w-full flex justify-center pt-4 pb-2 shrink-0">
               <div className="w-14 h-1.5 bg-outline-variant/50 rounded-full" />
             </div>
@@ -184,7 +178,6 @@ export default function AddExpenseSheet({ shopId, hideFab }: { shopId: string; h
                       onChange={(e) => setAmount(e.target.value)}
                       className="w-full pl-12 pr-4 py-3.5 bg-surface/80 rounded-2xl border-2 border-amber-500/20 focus:border-amber-500 focus:bg-surface-container-lowest outline-none transition-all text-right font-amount-display text-[40px] font-black tracking-tighter text-amber-600 dark:text-amber-400 placeholder:text-on-surface-variant/30 shadow-inner"
                       placeholder="0"
-                      autoFocus
                     />
                   </div>
 

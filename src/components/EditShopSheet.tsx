@@ -64,22 +64,16 @@ export default function EditShopSheet({
         <span className="material-symbols-outlined text-[20px]">edit</span>
       </button>
 
-      {isPortalMounted && typeof document !== 'undefined' && createPortal(
-        <div className={`fixed inset-0 z-[100] ${isOpen ? "pointer-events-auto" : "pointer-events-none"}`}>
+      {isPortalMounted && isOpen && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[100] pointer-events-auto animate-fade-in">
           {/* Backdrop */}
           <div 
-            className={`fixed inset-0 bg-black/50 z-[100] transition-opacity duration-300 backdrop-blur-sm ${
-              isOpen ? "opacity-100" : "opacity-0"
-            }`}
+            className="fixed inset-0 bg-black/50 z-[100] backdrop-blur-sm animate-fade-in"
             onClick={() => setIsOpen(false)}
           />
 
           {/* Bottom Sheet */}
-          <div
-            className={`fixed bottom-0 left-0 w-full bg-surface dark:bg-surface-dim rounded-t-[32px] shadow-[0_-10px_40px_rgba(0,0,0,0.2)] z-[101] transition-transform duration-300 ease-out transform max-h-[90dvh] flex flex-col border-t border-outline-variant/30 ${
-              isOpen ? "translate-y-0" : "translate-y-full"
-            }`}
-          >
+          <div className="fixed bottom-0 left-0 w-full bg-surface dark:bg-surface-dim rounded-t-[32px] shadow-[0_-10px_40px_rgba(0,0,0,0.2)] z-[101] transition-transform duration-300 ease-out transform max-h-[90dvh] flex flex-col border-t border-outline-variant/30 animate-slide-up">
             <div className="w-full flex justify-center pt-4 pb-2 shrink-0">
               <div className="w-12 h-1.5 bg-outline-variant/50 rounded-full" />
             </div>

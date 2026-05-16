@@ -147,7 +147,7 @@ function GlobalSearchOverlay({ shopId, isOpen, onClose }: GlobalSearchOverlayPro
     );
   };
 
-  if (!mounted) return null;
+  if (!mounted || !isOpen) return null;
 
   const overlay = (
     <div

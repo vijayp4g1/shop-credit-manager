@@ -77,17 +77,13 @@ export default function ClearKhataButton({ customerId, customerName, transaction
         </button>
       </div>
 
-      {isPortalMounted && typeof document !== 'undefined' && createPortal(
-        <div className={`fixed inset-0 z-[100] flex items-center justify-center p-6 ${showConfirmModal ? "pointer-events-auto" : "pointer-events-none"}`}>
+      {isPortalMounted && showConfirmModal && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 pointer-events-auto animate-fade-in">
           <div
-            className={`fixed inset-0 bg-black/50 z-[100] transition-opacity duration-300 backdrop-blur-sm ${showConfirmModal ? "opacity-100" : "opacity-0"}`}
+            className="fixed inset-0 bg-black/50 z-[100] backdrop-blur-sm animate-fade-in"
             onClick={() => setShowConfirmModal(false)}
           />
-          <div
-            className={`bg-surface rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-outline-variant/30 z-[101] transition-all duration-300 transform ${
-              showConfirmModal ? "scale-100 opacity-100" : "scale-95 opacity-0"
-            }`}
-          >
+          <div className="bg-surface rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-outline-variant/30 z-[101] transform scale-100 opacity-100 animate-scale-up">
             <div className="w-14 h-14 bg-jama-success/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-jama-success/30">
               <span className="text-2xl">🎉</span>
             </div>

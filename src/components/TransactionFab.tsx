@@ -155,22 +155,16 @@ export default function TransactionFab({ shopId, customers = [], preselectedCust
         <span className="material-symbols-outlined text-[32px]" style={{ fontVariationSettings: "'FILL' 1" }}>add</span>
       </button>
 
-      {isPortalMounted && typeof document !== 'undefined' && createPortal(
-        <div className={`fixed inset-0 z-[100] ${isOpen ? "pointer-events-auto" : "pointer-events-none"}`}>
+      {isPortalMounted && isOpen && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[100] pointer-events-auto animate-fade-in">
           {/* Backdrop */}
           <div 
-            className={`fixed inset-0 bg-black/50 z-[100] transition-opacity duration-300 backdrop-blur-sm ${
-              isOpen ? "opacity-100" : "opacity-0"
-            }`}
+            className="fixed inset-0 bg-black/50 z-[100] backdrop-blur-sm animate-fade-in"
             onClick={handleClose}
           />
 
           {/* Bottom Sheet */}
-          <div
-            className={`fixed bottom-0 left-0 w-full bg-gradient-to-b from-surface-container-lowest to-surface rounded-t-[32px] shadow-[0_-8px_30px_rgba(0,0,0,0.12)] border-t border-outline-variant/30 z-[101] transition-transform duration-400 ease-[cubic-bezier(0.2,0.8,0.2,1)] max-h-[90dvh] flex flex-col ${
-              isOpen ? "translate-y-0" : "translate-y-full"
-            }`}
-          >
+          <div className="fixed bottom-0 left-0 w-full bg-gradient-to-b from-surface-container-lowest to-surface rounded-t-[32px] shadow-[0_-8px_30px_rgba(0,0,0,0.12)] border-t border-outline-variant/30 z-[101] transition-transform duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] max-h-[90dvh] flex flex-col animate-slide-up">
             <div className="p-5 max-w-lg mx-auto w-full overflow-y-auto flex-1 pb-12">
               {/* Handle bar for bottom sheet */}
               <div className="w-12 h-1.5 bg-outline-variant/50 rounded-full mx-auto mb-6" />
