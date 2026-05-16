@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { createClient } from "@/utils/supabase/client";
 import EditTransactionSheet from "./EditTransactionSheet";
 import DeleteTransactionButton from "./DeleteTransactionButton";
@@ -30,7 +30,8 @@ export default function DailyDayBook({ shopId }: { shopId: string }) {
   const [items, setItems] = useState<LedgerItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
-  const supabase = createClient();
+  // Stable supabase client – created once per component mount
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
     fetchDailyData(selectedDate);
@@ -235,7 +236,8 @@ export default function DailyDayBook({ shopId }: { shopId: string }) {
 
             // Render Transaction
             const isJama = item.type === 'PAYMENT';
-            const customerName = item.customers?.name || 'Unknown Customer';
+            const custArr = Array.isArray(item.customers) ? item.customers : [item.customers];
+            const customerName = custArr[0]?.name || 'Unknown Customer';
 
             return (
               <div key={`tx_${item.id}`} className="relative flex items-start gap-4 group animate-fade-in-up opacity-0" style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'forwards' }}>

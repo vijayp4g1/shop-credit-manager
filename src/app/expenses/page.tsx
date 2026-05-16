@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { getShopContext } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import ExpenseList from "@/components/ExpenseList";
@@ -8,25 +8,10 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function ExpensesPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { supabase, user, shop } = await getShopContext();
 
-  if (!user) {
-    redirect("/login");
-  }
-
-  // Fetch shop
-  const { data: shops } = await supabase
-    .from("shops")
-    .select("*")
-    .eq("owner_id", user.id)
-    .limit(1);
-
-  const shop = shops?.[0];
-
-  if (!shop) {
-    redirect("/setup");
-  }
+  if (!user) redirect("/login");
+  if (!shop) redirect("/setup");
 
   const startOfMonth = new Date();
   startOfMonth.setDate(1);

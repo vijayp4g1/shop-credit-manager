@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { getShopContext } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import LedgerList from "@/components/LedgerList";
@@ -7,44 +7,18 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function Ledger() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { supabase, user, shop } = await getShopContext();
 
-  if (!user) {
-    redirect("/login");
-  }
-
-  // Fetch shop
-  const { data: shops } = await supabase
-    .from("shops")
-    .select("*")
-    .eq("owner_id", user.id)
-    .limit(1);
-
-  const shop = shops?.[0];
-
-  if (!shop) {
-    redirect("/setup");
-  }
+  if (!user) redirect("/login");
+  if (!shop) redirect("/setup");
 
   // Fetch all transactions for active customers
   const { data: transactions } = await supabase
     .from("transactions")
-    .select("*, customers!inner(name, deleted_at)")
+    .select("id, amount, type, payment_mode, description, created_at, customers!inner(name, deleted_at)")
     .eq("shop_id", shop.id)
     .is("customers.deleted_at", null)
     .order("created_at", { ascending: false });
-
-  // Helper for formatting dates and times
-  const formatDateTime = (dateStr: string) => {
-    const date = new Date(dateStr);
-    const today = new Date();
-    const isToday = date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
-    
-    const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const dateString = isToday ? 'Today' : date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-    return { dateString, timeString };
-  };
 
   // Calculate totals
   let totalJama = 0;

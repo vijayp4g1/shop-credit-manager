@@ -57,10 +57,11 @@ export default function EditShopSheet({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="mt-4 px-5 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-full text-xs font-bold uppercase tracking-widest border border-primary/20 transition-all active:scale-95 shadow-sm relative z-10 flex items-center gap-1.5 cursor-pointer"
+        className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-all active:scale-90 duration-200 bg-surface-container-lowest shadow-sm border border-outline-variant/50 cursor-pointer text-on-surface-variant"
+        title="Edit Shop Details"
+        aria-label="Edit Shop"
       >
-        <span className="material-symbols-outlined text-[16px]">edit</span>
-        Edit Shop Details
+        <span className="material-symbols-outlined text-[20px]">edit</span>
       </button>
 
       {isPortalMounted && typeof document !== 'undefined' && createPortal(

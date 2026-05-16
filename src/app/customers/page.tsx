@@ -1,33 +1,18 @@
 import AddCustomerSheet from "@/components/AddCustomerSheet";
 import CustomerList from "@/components/CustomerList";
-import HeaderSearchButton from "@/components/HeaderSearchButton";
-import { createClient } from "@/utils/supabase/server";
+import { getShopContext } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function Customers() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { supabase, user, shop } = await getShopContext();
 
-  if (!user) {
-    redirect("/login");
-  }
-
-  // Fetch shop
-  const { data: shops } = await supabase
-    .from("shops")
-    .select("*")
-    .eq("owner_id", user.id)
-    .limit(1);
-
-  const shop = shops?.[0];
-
-  if (!shop) {
-    redirect("/setup");
-  }
+  if (!user) redirect("/login");
+  if (!shop) redirect("/setup");
 
   // Fetch customers and shop summary in parallel
   const [
@@ -72,7 +57,9 @@ export default async function Customers() {
             </h1>
           </div>
         </div>
-        <HeaderSearchButton />
+        <Link href="/" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high text-on-surface-variant transition-all active:scale-90 duration-200">
+          <span className="material-symbols-outlined text-[22px]">arrow_back</span>
+        </Link>
       </header>
 
       {/* Main Content */}

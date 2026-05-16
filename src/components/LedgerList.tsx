@@ -11,11 +11,15 @@ type Transaction = {
   type: "CREDIT" | "PAYMENT";
   payment_mode: string;
   description: string;
-  customers: {
-    name: string;
-    deleted_at: string | null;
-  } | null;
+  customers: { name: string; deleted_at: string | null } | { name: string; deleted_at: string | null }[] | null;
 };
+
+// Helper to extract name from either scalar or array join
+function getCustomerName(customers: Transaction["customers"]): string {
+  if (!customers) return "Unknown Customer";
+  if (Array.isArray(customers)) return customers[0]?.name || "Unknown Customer";
+  return customers.name || "Unknown Customer";
+}
 
 export default function LedgerList({ initialTransactions }: { initialTransactions: Transaction[] }) {
   const [filterType, setFilterType] = useState<"ALL" | "UDHAR" | "JAMA">("ALL");
@@ -41,7 +45,7 @@ export default function LedgerList({ initialTransactions }: { initialTransaction
       // Search Filter
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
-        const custName = tx.customers?.name?.toLowerCase() || "";
+        const custName = getCustomerName(tx.customers).toLowerCase();
         const desc = tx.description?.toLowerCase() || "";
         if (!custName.includes(query) && !desc.includes(query)) {
           return false;
@@ -128,7 +132,7 @@ export default function LedgerList({ initialTransactions }: { initialTransaction
         {filteredTransactions.length > 0 ? (
           filteredTransactions.map((tx, index) => {
             const isJama = tx.type === 'PAYMENT';
-            const customerName = tx.customers?.name || 'Unknown Customer';
+            const customerName = getCustomerName(tx.customers);
             const { dateString, timeString } = formatDateTime(tx.created_at);
 
             return (

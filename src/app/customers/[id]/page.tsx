@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { getShopContext } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import TransactionFab from "@/components/TransactionFab";
@@ -20,26 +20,12 @@ export default async function CustomerLedger({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { supabase, user, shop } = await getShopContext();
 
-  if (!user) {
-    redirect("/login");
-  }
+  if (!user) redirect("/login");
+  if (!shop) redirect("/setup");
 
-  const { data: shops } = await supabase
-    .from("shops")
-    .select("*")
-    .eq("owner_id", user.id)
-    .limit(1);
-
-  const shop = shops?.[0];
-
-  if (!shop) {
-    redirect("/setup");
-  }
-
-  // Fetch customer details, transactions, and all customers in parallel
+  // Fetch customer + their transactions in parallel (drop the costly allCustomers fetch)
   const [
     { data: customer },
     { data: transactions },
@@ -47,20 +33,20 @@ export default async function CustomerLedger({
   ] = await Promise.all([
     supabase
       .from("customers")
-      .select("*")
+      .select("id, name, phone, balance, notes, address")
       .eq("id", id)
       .eq("shop_id", shop.id)
       .is("deleted_at", null)
       .single(),
     supabase
       .from("transactions")
-      .select("*")
+      .select("id, amount, type, payment_mode, description, created_at")
       .eq("customer_id", id)
       .eq("shop_id", shop.id)
       .order("created_at", { ascending: false }),
     supabase
       .from("customers")
-      .select("id, name, phone, balance")
+      .select("id, name")
       .eq("shop_id", shop.id)
       .is("deleted_at", null)
       .order("name", { ascending: true })

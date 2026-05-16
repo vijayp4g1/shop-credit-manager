@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { getShopContext } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import DailyDayBook from "@/components/DailyDayBook";
@@ -6,25 +6,10 @@ import DailyDayBook from "@/components/DailyDayBook";
 export const dynamic = "force-dynamic";
 
 export default async function DailyReportPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { user, shop } = await getShopContext();
 
-  if (!user) {
-    redirect("/login");
-  }
-
-  // Fetch shop
-  const { data: shops } = await supabase
-    .from("shops")
-    .select("id, name")
-    .eq("owner_id", user.id)
-    .limit(1);
-
-  const shop = shops?.[0];
-
-  if (!shop) {
-    redirect("/setup");
-  }
+  if (!user) redirect("/login");
+  if (!shop) redirect("/setup");
 
   return (
     <div className="min-h-screen bg-surface pb-24">

@@ -1,37 +1,22 @@
 import TransactionFab from "@/components/TransactionFab";
-import HeaderSearchButton from "@/components/HeaderSearchButton";
+import GlobalSearch from "@/components/GlobalSearch";
 import QuickActionButtons from "@/components/QuickActionButtons";
 import AddCustomerSheet from "@/components/AddCustomerSheet";
 import AddExpenseSheet from "@/components/AddExpenseSheet";
-import { createClient } from "@/utils/supabase/server";
+import { getShopContext } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 0; // Disable caching to ensure fresh ledger data
+export const revalidate = 0;
 
 export default async function Dashboard() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { supabase, user, shop } = await getShopContext();
 
-  if (!user) {
-    redirect("/login");
-  }
+  if (!user) redirect("/login");
+  if (!shop) redirect("/setup");
 
-  // Fetch shop
-  const { data: shops } = await supabase
-    .from("shops")
-    .select("*")
-    .eq("owner_id", user.id)
-    .limit(1);
-
-  const shop = shops?.[0];
-
-  if (!shop) {
-    redirect("/setup");
-  }
-
-  // Fetch customers, summary, and recent transactions in parallel
+  // Fetch customers, summary, and recent transactions — all in parallel
   const [
     { data: customers },
     { data: summaryData, error: summaryError },
@@ -45,7 +30,7 @@ export default async function Dashboard() {
     supabase.rpc("get_shop_balance_summary", { p_shop_id: shop.id }),
     supabase
       .from("transactions")
-      .select("*, customers!inner(name, deleted_at)")
+      .select("id, amount, type, payment_mode, description, created_at, customer_id, customers!inner(name, deleted_at)")
       .eq("shop_id", shop.id)
       .is("customers.deleted_at", null)
       .order("created_at", { ascending: false })
@@ -93,7 +78,7 @@ export default async function Dashboard() {
             </h1>
           </div>
         </div>
-        <HeaderSearchButton />
+        <GlobalSearch shopId={shop.id} />
       </header>
 
       {/* Main Content */}
@@ -183,12 +168,12 @@ export default async function Dashboard() {
             {transactions && transactions.length > 0 ? (
               transactions.map((tx, index) => {
                 const isJama = tx.type === 'PAYMENT';
-                const customerName = tx.customers?.name || 'Unknown';
+                const custArr = Array.isArray(tx.customers) ? tx.customers : [tx.customers];
+                const customerName = custArr[0]?.name || 'Unknown';
                 const initials = customerName.substring(0, 2).toUpperCase();
                 const noteOrMode = tx.description ? tx.description : (tx.payment_mode ? `Paid via ${tx.payment_mode}` : '');
                 
-                return (
-                  <Link 
+                return (                  <Link 
                     key={tx.id} 
                     href={`/customers/${tx.customer_id}`}
                     className="group relative overflow-hidden bg-gradient-to-br from-surface-container-lowest via-surface-container/30 to-surface-container-lowest border border-outline-variant/40 hover:border-primary/40 hover:bg-surface-container/50 rounded-[28px] p-4.5 flex items-center justify-between shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-300 hover:-translate-y-0.5 block"
