@@ -6,6 +6,11 @@ import { usePathname } from "next/navigation";
 export default function BottomNavBar() {
   const pathname = usePathname();
 
+  // Hide navigation bar on authentication and setup screens
+  if (pathname === "/login" || pathname === "/setup" || pathname?.startsWith("/login") || pathname?.startsWith("/setup")) {
+    return null;
+  }
+
   const navItems = [
     { href: "/", icon: "dashboard", label: "Dashboard", filledIcon: true },
     { href: "/customers", icon: "group", label: "Customers", filledIcon: false },
