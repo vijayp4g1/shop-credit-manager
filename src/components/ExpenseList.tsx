@@ -4,7 +4,7 @@ import { useAppStore } from "@/store";
 import { useMemo, useState, useEffect } from "react";
 import DeleteExpenseButton from "./DeleteExpenseButton";
 import EditExpenseModal from "./EditExpenseModal";
-import { formatRelativeTime } from "@/lib";
+import { formatRelativeTime, formatDateIST, isTodayIST } from "@/lib";
 
 interface Expense {
   id: string;
@@ -192,19 +192,21 @@ export default function ExpenseList({ expenses, totalMonthlyExpenses, hasTableEr
     const groups: Record<string, { label: string; dateKey: string; expenses: Expense[]; total: number }> = {};
     
     finalFilteredExpenses.forEach((ex) => {
-      const dateObj = new Date(ex.expense_date);
-      const today = new Date();
-      const yesterday = new Date(today);
-      yesterday.setDate(today.getDate() - 1);
+      const isToday = isTodayIST(ex.expense_date);
+      
+      const yesterdayDate = new Date();
+      yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+      const isYesterday = formatDateIST(ex.expense_date, { year: 'numeric', month: '2-digit', day: '2-digit' }) === 
+        formatDateIST(yesterdayDate, { year: 'numeric', month: '2-digit', day: '2-digit' });
 
-      let label = dateObj.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
-      if (dateObj.toDateString() === today.toDateString()) {
-        label = "Today, " + dateObj.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
-      } else if (dateObj.toDateString() === yesterday.toDateString()) {
-        label = "Yesterday, " + dateObj.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+      let label = formatDateIST(ex.expense_date);
+      if (isToday) {
+        label = "Today, " + formatDateIST(ex.expense_date, { day: "numeric", month: "short" });
+      } else if (isYesterday) {
+        label = "Yesterday, " + formatDateIST(ex.expense_date, { day: "numeric", month: "short" });
       }
 
-      const dateKey = dateObj.toDateString();
+      const dateKey = formatDateIST(ex.expense_date, { year: 'numeric', month: '2-digit', day: '2-digit' });
       if (!groups[dateKey]) {
         groups[dateKey] = { label, dateKey, expenses: [], total: 0 };
       }
@@ -235,7 +237,7 @@ export default function ExpenseList({ expenses, totalMonthlyExpenses, hasTableEr
     if (upi > 0) report += `• UPI: ₹${upi.toLocaleString("en-IN")}\n`;
     if (bank > 0) report += `• BANK TRANSFER: ₹${bank.toLocaleString("en-IN")}\n`;
 
-    report += `\nGenerated on ${new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}`;
+    report += `\nGenerated on ${formatDateIST(new Date())}`;
 
     if (navigator.clipboard) {
       navigator.clipboard.writeText(report);

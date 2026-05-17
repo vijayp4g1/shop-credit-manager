@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { createClient } from "@/utils/supabase/client";
 import EditTransactionSheet from "./EditTransactionSheet";
 import DeleteTransactionButton from "./DeleteTransactionButton";
+import { formatDateIST, formatTimeIST, isTodayIST } from "@/lib";
 
 // Define a unified ledger item type
 type LedgerItem = {
@@ -94,7 +95,7 @@ export default function DailyDayBook({ shopId }: { shopId: string }) {
     }
   };
 
-  const isToday = selectedDate.toDateString() === new Date().toDateString();
+  const isToday = isTodayIST(selectedDate);
 
   let totalJama = 0;
   let totalUdhar = 0;
@@ -122,7 +123,7 @@ export default function DailyDayBook({ shopId }: { shopId: string }) {
         
         <div className="flex flex-col items-center">
           <span className="font-bold text-sm text-on-surface">
-            {isToday ? "Today" : selectedDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+            {isToday ? "Today" : formatDateIST(selectedDate)}
           </span>
           <span className="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">
             Day Book
@@ -197,7 +198,7 @@ export default function DailyDayBook({ shopId }: { shopId: string }) {
           </div>
         ) : items.length > 0 ? (
           items.map((item, index) => {
-            const timeString = new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const timeString = formatTimeIST(item.created_at, { hour: '2-digit', minute: '2-digit' });
 
             if (item.isExpense) {
               // Render Expense

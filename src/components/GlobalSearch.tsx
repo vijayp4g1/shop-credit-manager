@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import { createPortal } from "react-dom";
+import { formatDateIST } from "@/lib";
 
 type CustomerResult = {
   id: string;
@@ -129,10 +130,7 @@ function GlobalSearchOverlay({ shopId, isOpen, onClose }: GlobalSearchOverlayPro
   const totalResults = results.customers.length + results.transactions.length + results.expenses.length;
   const hasQuery = query.trim().length >= 2;
 
-  const formatDate = (str: string) => {
-    const d = new Date(str);
-    return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
-  };
+  const formatDate = (str: string) => formatDateIST(str);
 
   const highlightMatch = (text: string, q: string) => {
     if (!q || !text) return text;

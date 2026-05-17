@@ -4,6 +4,7 @@ import Link from "next/link";
 import LogoutButton from "@/components/LogoutButton";
 import EditShopSheet from "@/components/EditShopSheet";
 import ExportDataButton from "@/components/ExportDataButton";
+import { formatDateIST } from "@/lib";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -35,7 +36,7 @@ export default async function ProfilePage() {
     totalTransactions = txCount || 0;
   }
 
-  const joinDate = new Date(user.created_at).toLocaleDateString("en-IN", {
+  const joinDate = formatDateIST(user.created_at, {
     day: "numeric", month: "long", year: "numeric"
   });
 

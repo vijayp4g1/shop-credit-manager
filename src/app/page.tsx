@@ -6,6 +6,7 @@ import AddExpenseSheet from "@/components/AddExpenseSheet";
 import { getShopContext } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { formatRelativeTime } from "@/lib";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -53,15 +54,7 @@ export default async function Dashboard() {
     });
   }
 
-  // Helper for formatting relative time
-  const formatTime = (dateStr: string) => {
-    const date = new Date(dateStr);
-    const today = new Date();
-    const isToday = date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
-    
-    const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    return isToday ? `Today, ${timeString}` : `${date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}, ${timeString}`;
-  };
+  // Removed inline formatTime in favor of formatRelativeTime
 
   return (
     <div className="min-h-screen bg-surface pb-24">
@@ -189,7 +182,7 @@ export default async function Dashboard() {
                         </div>
                         <div className="text-[11px] text-on-surface-variant flex items-center gap-1.5 mt-1 font-medium truncate opacity-90">
                           <span className="material-symbols-outlined text-[14px] opacity-70 shrink-0">schedule</span>
-                          <span>{formatTime(tx.created_at)}</span>
+                          <span>{formatRelativeTime(tx.created_at)}</span>
                           {noteOrMode && (
                             <>
                               <span className="opacity-50">•</span>

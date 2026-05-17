@@ -1,6 +1,7 @@
 import { getShopContext } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { formatDateTimeSplit } from "@/lib";
 import TransactionFab from "@/components/TransactionFab";
 import DeleteCustomerButton from "@/components/DeleteCustomerButton";
 import DeleteTransactionButton from "@/components/DeleteTransactionButton";
@@ -68,19 +69,6 @@ export default async function CustomerLedger({
     if (tx.type === "PAYMENT") totalPayment += Number(tx.amount);
   });
 
-  const formatDateTime = (dateStr: string) => {
-    const date = new Date(dateStr);
-    const today = new Date();
-    const isToday =
-      date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear();
-    const timeString = date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    const dateString = isToday
-      ? "Today"
-      : date.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
-    return { dateString, timeString };
-  };
 
   return (
     <div className="min-h-screen bg-surface pb-24">
@@ -239,7 +227,7 @@ export default async function CustomerLedger({
             {transactions && transactions.length > 0 ? (
               transactions.map((tx, index) => {
                 const isJama = tx.type === "PAYMENT";
-                const { dateString, timeString } = formatDateTime(tx.created_at);
+                const { dateString, timeString } = formatDateTimeSplit(tx.created_at);
                 let runningBalance = 0;
                 for (let i = transactions.length - 1; i >= 0; i--) {
                   const t = transactions[i];

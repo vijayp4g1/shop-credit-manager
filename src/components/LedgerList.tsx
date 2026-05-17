@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import DeleteTransactionButton from "./DeleteTransactionButton";
 import EditTransactionSheet from "./EditTransactionSheet";
+import { formatDateTimeSplit } from "@/lib";
 
 type Transaction = {
   id: string;
@@ -25,16 +26,7 @@ export default function LedgerList({ initialTransactions }: { initialTransaction
   const [filterType, setFilterType] = useState<"ALL" | "UDHAR" | "JAMA">("ALL");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Helper for formatting dates and times
-  const formatDateTime = (dateStr: string) => {
-    const date = new Date(dateStr);
-    const today = new Date();
-    const isToday = date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
-    
-    const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const dateString = isToday ? 'Today' : date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-    return { dateString, timeString };
-  };
+  // Removed inline formatDateTime in favor of formatDateTimeSplit
 
   const filteredTransactions = useMemo(() => {
     return initialTransactions.filter((tx) => {
@@ -133,7 +125,7 @@ export default function LedgerList({ initialTransactions }: { initialTransaction
           filteredTransactions.map((tx, index) => {
             const isJama = tx.type === 'PAYMENT';
             const customerName = getCustomerName(tx.customers);
-            const { dateString, timeString } = formatDateTime(tx.created_at);
+            const { dateString, timeString } = formatDateTimeSplit(tx.created_at);
 
             return (
               <div 

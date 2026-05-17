@@ -2,6 +2,7 @@ import { getShopContext } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import WhatsAppReminderButton from "@/components/WhatsAppReminderButton";
+import { getStartOfMonthISTISO, getCurrentMonthNameIST } from "@/lib";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -12,9 +13,7 @@ export default async function Reports() {
   if (!user) redirect("/login");
   if (!shop) redirect("/setup");
 
-  const startOfMonth = new Date();
-  startOfMonth.setDate(1);
-  startOfMonth.setHours(0, 0, 0, 0);
+  const startOfMonthISO = getStartOfMonthISTISO();
 
   // Fetch customers and current month transactions in parallel
   const [
@@ -31,7 +30,7 @@ export default async function Reports() {
       .select("*, customers!inner(name, deleted_at)")
       .eq("shop_id", shop.id)
       .is("customers.deleted_at", null)
-      .gte("created_at", startOfMonth.toISOString())
+      .gte("created_at", startOfMonthISO)
   ]);
   
   let totalOutstanding = 0;
@@ -66,7 +65,7 @@ export default async function Reports() {
   const collectionPercent = totalVolume > 0 ? (thisMonthCollection / totalVolume) * 100 : 0;
   const creditPercent = totalVolume > 0 ? (thisMonthCredit / totalVolume) * 100 : 0;
   
-  const currentMonthName = startOfMonth.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
+  const currentMonthName = getCurrentMonthNameIST();
 
   return (
     <div className="min-h-screen bg-surface pb-24">

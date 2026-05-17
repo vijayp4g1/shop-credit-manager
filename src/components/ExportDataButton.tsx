@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { formatDateIST, formatTimeIST } from "@/lib";
 
 export default function ExportDataButton({ shopId, shopName }: { shopId: string; shopName: string }) {
   const [isExporting, setIsExporting] = useState(false);
@@ -37,10 +38,9 @@ export default function ExportDataButton({ shopId, shopName }: { shopId: string;
     if (!error && data) {
       const headers = ["Date", "Time", "Customer", "Type", "Amount (₹)", "Payment Mode", "Notes"];
       const rows = data.map((tx: any) => {
-        const d = new Date(tx.created_at);
         return [
-          d.toLocaleDateString("en-IN"),
-          d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }),
+          formatDateIST(tx.created_at, { year: "numeric", month: "2-digit", day: "2-digit" }),
+          formatTimeIST(tx.created_at, { hour: "2-digit", minute: "2-digit" }),
           tx.customers?.name || "Unknown",
           tx.type === "CREDIT" ? "Udhar (Credit)" : "Jama (Payment)",
           tx.amount,
@@ -48,7 +48,7 @@ export default function ExportDataButton({ shopId, shopName }: { shopId: string;
           tx.description || "",
         ];
       });
-      const dateStr = new Date().toISOString().slice(0, 10);
+      const dateStr = formatDateIST(new Date(), { year: "numeric", month: "2-digit", day: "2-digit" }).replace(/\//g, "-");
       downloadCSV([headers, ...rows], `${shopName}_Transactions_${dateStr}.csv`);
     }
 
@@ -69,13 +69,13 @@ export default function ExportDataButton({ shopId, shopName }: { shopId: string;
     if (!error && data) {
       const headers = ["Date", "Category", "Amount (₹)", "Payment Mode", "Notes"];
       const rows = data.map((ex: any) => [
-        new Date(ex.expense_date).toLocaleDateString("en-IN"),
+        formatDateIST(ex.expense_date, { year: "numeric", month: "2-digit", day: "2-digit" }),
         ex.category || "General",
         ex.amount,
         ex.payment_mode || "CASH",
         ex.description || "",
       ]);
-      const dateStr = new Date().toISOString().slice(0, 10);
+      const dateStr = formatDateIST(new Date(), { year: "numeric", month: "2-digit", day: "2-digit" }).replace(/\//g, "-");
       downloadCSV([headers, ...rows], `${shopName}_Expenses_${dateStr}.csv`);
     }
 

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
+import { formatDateIST, formatTimeIST } from "@/lib";
 
 interface Transaction {
   id: string;
@@ -57,9 +58,8 @@ export default function DownloadStatementButton({
     let totalPayment = 0;
 
     const rowsHtml = transactions.map((tx, index) => {
-      const dateObj = new Date(tx.created_at);
-      const date = dateObj.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
-      const time = dateObj.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true });
+      const date = formatDateIST(tx.created_at, { day: "2-digit", month: "short", year: "numeric" });
+      const time = formatTimeIST(tx.created_at, { hour: "2-digit", minute: "2-digit", hour12: true });
       const isCredit = tx.type === "CREDIT";
       if (isCredit) totalCredit += Number(tx.amount);
       else totalPayment += Number(tx.amount);
@@ -121,7 +121,7 @@ export default function DownloadStatementButton({
           </div>
           <div style="text-align: right;">
             <div style="font-size: 20px; font-weight: 800; color: #0f172a; margin: 0 0 4px 0; letter-spacing: -0.5px;">Account Statement</div>
-            <div style="font-size: 12px; font-weight: 600; color: #64748b;">Generated on ${new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</div>
+            <div style="font-size: 12px; font-weight: 600; color: #64748b;">Generated on ${formatDateIST(new Date(), { day: "numeric", month: "short", year: "numeric" })}</div>
           </div>
         </div>
 
